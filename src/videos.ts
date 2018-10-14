@@ -5,7 +5,8 @@ import {
   GraphQLString,
   GraphQLInt,
   GraphQLBoolean,
-  GraphQLList
+  GraphQLList,
+  GraphQLInputObjectType
 } from 'graphql';
 
 import { getVideoById, IVideo } from './data';
@@ -41,6 +42,24 @@ const videoType = new GraphQLObjectType({
   }
 })
 
+const videoInputType = new GraphQLInputObjectType({
+  name: 'VideoInput',
+  fields: {
+    title: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The title of the video'
+    },
+    duration: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'The duration of the video'
+    },
+    watched: {
+      type: new GraphQLNonNull(GraphQLBoolean),
+      description: 'Whether or not the viewer has watched the video'
+    }
+  }
+})
+
 export const queryFields = {
   videos: {
     type: new GraphQLList(videoType),
@@ -59,21 +78,12 @@ export const mutationFields = {
   createVideo: {
     type: videoType,
     args: {
-      title: {
-        type: new GraphQLNonNull(GraphQLString),
-        description: 'The title of the video'
-      },
-      duration: {
-        type: new GraphQLNonNull(GraphQLInt),
-        description: 'The duration of the video'
-      },
-      watched: {
-        type: new GraphQLNonNull(GraphQLBoolean),
-        description: 'Whether or not the viewer has watched the video'
+      video: {
+        type: new GraphQLNonNull(videoInputType)
       }
     },
     resolve: (_: any, args: any) => {
-      return createVideo(args as IVideo);
+      return createVideo(args.video);
     }
   }
 }
