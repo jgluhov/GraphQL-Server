@@ -14,7 +14,8 @@ import {
   globalIdField,
   connectionDefinitions,
   connectionFromPromisedArray,
-  connectionArgs
+  connectionArgs,
+  mutationWithClientMutationId
 } from 'graphql-relay'
 
 const queryArgs = {
@@ -45,24 +46,6 @@ export const videoType = new GraphQLObjectType({
   interfaces: [nodeInterface]
 })
 
-const videoInputType = new GraphQLInputObjectType({
-  name: 'VideoInput',
-  fields: {
-    title: {
-      type: new GraphQLNonNull(GraphQLString),
-      description: 'The title of the video'
-    },
-    duration: {
-      type: new GraphQLNonNull(GraphQLInt),
-      description: 'The duration of the video'
-    },
-    watched: {
-      type: new GraphQLNonNull(GraphQLBoolean),
-      description: 'Whether or not the viewer has watched the video'
-    }
-  }
-})
-
 const { connectionType: VideoConnection } = connectionDefinitions({
   nodeType: videoType,
   connectionFields: () => ({
@@ -90,16 +73,30 @@ export const queryFields = {
   }
 }
 
-export const mutationFields = {
-  createVideo: {
-    type: videoType,
-    args: {
-      video: {
-        type: new GraphQLNonNull(videoInputType)
-      }
+const videoMutation = mutationWithClientMutationId({
+  name: 'AddVideo',
+  inputFields: {
+    title: {
+      type: new GraphQLNonNull(GraphQLString),
+      description: 'The title of the video'
     },
-    resolve: (_: any, args: any) => {
-      return createVideo(args.video)
+    duration: {
+      type: new GraphQLNonNull(GraphQLInt),
+      description: 'The duration of the video'
+    },
+    watched: {
+      type: new GraphQLNonNull(GraphQLBoolean),
+      description: 'Whether or not the viewer has watched the video'
     }
-  }
+  },
+  outputFields: {
+    video: {
+      type: videoType
+    }
+  },
+  mutateAndGetPayload: (args: any) => Promise.resolve(createVideo(args)).then((video) => ({video}))
+})
+
+export const mutationFields = {
+  createVideo: videoMutation
 }
