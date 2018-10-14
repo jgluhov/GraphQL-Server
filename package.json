@@ -9,7 +9,11 @@
     "start": "ts-node-dev ./src"
   },
   "dependencies": {
+    "@types/express": "^4.16.0",
+    "@types/express-graphql": "^0.6.1",
     "@types/graphql": "^14.0.2",
+    "express": "^4.16.4",
+    "express-graphql": "^0.6.12",
     "graphql": "^14.0.2",
     "ts-node-dev": "^1.0.0-pre.30",
     "typescript": "^3.1.3"
