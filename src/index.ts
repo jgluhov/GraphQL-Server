@@ -2,6 +2,7 @@ import express from 'express'
 import graphqlHttp from 'express-graphql'
 import * as videos from './videos'
 import { GraphQLSchema, GraphQLObjectType } from 'graphql'
+import { nodeField } from './node';
 
 const PORT = process.env.PORT || 3000
 const server = express()
@@ -10,6 +11,7 @@ const queryType = new GraphQLObjectType({
   name: 'QueryType',
   description: 'The root query type',
   fields: {
+    node: nodeField,
     ...videos.queryFields
   }
 })

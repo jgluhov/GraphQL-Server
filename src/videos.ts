@@ -9,9 +9,10 @@ import {
   GraphQLInputObjectType
 } from 'graphql';
 
-import { getVideoById, IVideo } from './data';
+import { getVideoById } from './data';
 import { getVideos, createVideo } from './data';
 import { nodeInterface } from './node';
+import { globalIdField } from 'graphql-relay';
 
 const queryArgs = {
   id: {
@@ -20,14 +21,11 @@ const queryArgs = {
   }
 }
 
-const videoType = new GraphQLObjectType({
+export const videoType = new GraphQLObjectType({
   name: 'Video',
   description: 'Video Actions',
   fields: {
-    id: {
-      type: new GraphQLNonNull(GraphQLID),
-      description: 'The Id of the video'
-    },
+    id: globalIdField(),
     title: {
       type: GraphQLString,
       description: 'The title of the video'
