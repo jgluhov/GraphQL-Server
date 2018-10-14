@@ -5,14 +5,17 @@ import {
   GraphQLString,
   GraphQLInt,
   GraphQLBoolean,
-  GraphQLList,
   GraphQLInputObjectType
-} from 'graphql';
-
-import { getVideoById } from './data';
-import { getVideos, createVideo } from './data';
-import { nodeInterface } from './node';
-import { globalIdField } from 'graphql-relay';
+} from 'graphql'
+import { getVideoById } from './data'
+import { getVideos, createVideo } from './data'
+import { nodeInterface } from './node'
+import {
+  globalIdField,
+  connectionDefinitions,
+  connectionFromPromisedArray,
+  connectionArgs
+} from 'graphql-relay'
 
 const queryArgs = {
   id: {
@@ -60,16 +63,29 @@ const videoInputType = new GraphQLInputObjectType({
   }
 })
 
+const { connectionType: VideoConnection } = connectionDefinitions({
+  nodeType: videoType,
+  connectionFields: () => ({
+    totalCount: {
+      type: GraphQLInt,
+      description: 'A count of total number of objects in this collection',
+      resolve: (conn) => conn.edges.length
+    }
+  })
+})
+
 export const queryFields = {
   videos: {
-    type: new GraphQLList(videoType),
-    resolve: () => getVideos()
+    type: VideoConnection,
+    args: connectionArgs,
+    resolve: (_: any, args: any) =>
+      connectionFromPromisedArray(getVideos(), args)
   },
   video: {
     type: videoType,
     args: queryArgs,
     resolve: (_: any, args: any) => {
-      return getVideoById(args.id);
+      return getVideoById(args.id)
     }
   }
 }
@@ -83,7 +99,7 @@ export const mutationFields = {
       }
     },
     resolve: (_: any, args: any) => {
-      return createVideo(args.video);
+      return createVideo(args.video)
     }
   }
 }
