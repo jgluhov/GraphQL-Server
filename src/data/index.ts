@@ -1,4 +1,4 @@
-export type VideoType = {
+export interface IVideo {
   id: string,
   title: string,
   duration: number,
@@ -21,4 +21,6 @@ const videoB = {
 
 const videos = [videoA, videoB]
 
-export const getVideoById = (id: string) => Promise.resolve(videos.find((video: VideoType) => video.id === id))
+export const getVideoById = (id: string) =>
+  Promise.resolve(videos.find((video: IVideo) => video.id === id))
+export const getVideos = () => Promise.resolve(videos);
