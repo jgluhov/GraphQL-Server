@@ -11,6 +11,7 @@ import {
 
 import { getVideoById, IVideo } from './data';
 import { getVideos, createVideo } from './data';
+import { nodeInterface } from './node';
 
 const queryArgs = {
   id: {
@@ -24,7 +25,7 @@ const videoType = new GraphQLObjectType({
   description: 'Video Actions',
   fields: {
     id: {
-      type: GraphQLID,
+      type: new GraphQLNonNull(GraphQLID),
       description: 'The Id of the video'
     },
     title: {
@@ -39,7 +40,8 @@ const videoType = new GraphQLObjectType({
       type: GraphQLBoolean,
       description: 'Whether or not the viewer has watched the video'
     }
-  }
+  },
+  interfaces: [nodeInterface]
 })
 
 const videoInputType = new GraphQLInputObjectType({
