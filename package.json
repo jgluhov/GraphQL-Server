@@ -1,0 +1,17 @@
+{
+  "name": "GraphQL-Server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/jgluhov/GraphQL-Server.git",
+  "author": "Evgeny Glukhov <evglukhov@luxoft.com>",
+  "license": "MIT",
+  "scripts": {
+    "start": "ts-node-dev ./src"
+  },
+  "dependencies": {
+    "@types/graphql": "^14.0.2",
+    "graphql": "^14.0.2",
+    "ts-node-dev": "^1.0.0-pre.30",
+    "typescript": "^3.1.3"
+  }
+}
