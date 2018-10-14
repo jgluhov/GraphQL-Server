@@ -7,6 +7,7 @@ import {
   GraphQLString,
   GraphQLInt,
   GraphQLBoolean,
+  GraphQLNonNull,
   GraphQLID
 } from 'graphql'
 
@@ -44,7 +45,7 @@ const queryType = new GraphQLObjectType({
       type: videoType,
       args: {
         id: {
-          type: GraphQLID,
+          type: new GraphQLNonNull(GraphQLID),
           description: 'The id of the video'
         }
       },
