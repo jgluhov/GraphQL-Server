@@ -8,17 +8,17 @@ import {
   GraphQLList
 } from 'graphql';
 
-import { getVideoById } from './data';
-import { getVideos } from './data/index';
+import { getVideoById, IVideo } from './data';
+import { getVideos, createVideo } from './data';
 
-export const queryArgs = {
+const queryArgs = {
   id: {
     type: new GraphQLNonNull(GraphQLID),
     description: 'The id of the video'
   }
 }
 
-export const videoType = new GraphQLObjectType({
+const videoType = new GraphQLObjectType({
   name: 'Video',
   description: 'Video Actions',
   fields: {
@@ -41,7 +41,7 @@ export const videoType = new GraphQLObjectType({
   }
 })
 
-export const fields = {
+export const queryFields = {
   videos: {
     type: new GraphQLList(videoType),
     resolve: () => getVideos()
@@ -49,6 +49,31 @@ export const fields = {
   video: {
     type: videoType,
     args: queryArgs,
-    resolve: (_: any, args: any) => getVideoById(args.id)
+    resolve: (_: any, args: any) => {
+      return getVideoById(args.id);
+    }
+  }
+}
+
+export const mutationFields = {
+  createVideo: {
+    type: videoType,
+    args: {
+      title: {
+        type: new GraphQLNonNull(GraphQLString),
+        description: 'The title of the video'
+      },
+      duration: {
+        type: new GraphQLNonNull(GraphQLInt),
+        description: 'The duration of the video'
+      },
+      watched: {
+        type: new GraphQLNonNull(GraphQLBoolean),
+        description: 'Whether or not the viewer has watched the video'
+      }
+    },
+    resolve: (_: any, args: any) => {
+      return createVideo(args as IVideo);
+    }
   }
 }
