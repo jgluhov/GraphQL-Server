@@ -1,5 +1,6 @@
 import express from 'express'
 import graphqlHttp from 'express-graphql'
+import { VideoType, getVideoById } from './data/index';
 import {
   GraphQLSchema,
   GraphQLObjectType,
@@ -11,13 +12,6 @@ import {
 
 const PORT = process.env.PORT || 3000
 const server = express()
-
-type Video = {
-  id: string,
-  title: string,
-  duration: number,
-  watched: boolean
-}
 
 const videoType = new GraphQLObjectType({
   name: 'Video',
@@ -48,14 +42,15 @@ const queryType = new GraphQLObjectType({
   fields: {
     video: {
       type: videoType,
-      resolve: () => new Promise<Video>(resolve => {
-        setTimeout(() => resolve({
-          id: 'a',
-          title: 'Terminator 2',
-          duration: 180,
-          watched: true
-        })
-      )})
+      args: {
+        id: {
+          type: GraphQLID,
+          description: 'The id of the video'
+        }
+      },
+      resolve: (_, args) => {
+        return getVideoById(args.id)
+      }
     }
   }
 })
@@ -63,22 +58,6 @@ const queryType = new GraphQLObjectType({
 const schema = new GraphQLSchema({
   query: queryType
 })
-
-const videoA = {
-  id: 'a',
-  title: 'GraphQL Server',
-  duration: 120,
-  watched: false
-}
-
-const videoB = {
-  id: 'b',
-  title: 'GraphQL Client',
-  duration: 80,
-  watched: true
-}
-
-const videos = [videoA, videoB]
 
 server.use(
   '/graphql',
